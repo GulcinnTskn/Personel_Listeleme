@@ -1,0 +1,220 @@
+﻿@model Personel_Listeleme.MyModel.PERSONELLER
+
+@*modeli, js kodlarını kullanacağımız için listeleme şeklinde göstermedik ayrıca güncelleme işlemini de aynı sayfada yapacağımız için  *@
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container">
+    <table class="table table-bordered table-striped">
+        <tr>
+
+            <th>
+                Title
+            </th>
+            <th>
+                First Name
+            </th>
+            <th>
+                Last Name
+            </th>
+            <th>
+                Birth Date
+            </th>
+            <th>
+                Position
+            </th>
+            <th>
+                Hire Date
+            </th>
+            <th>
+                State
+            </th>
+            <th>
+
+            </th>
+
+        </tr>
+        <tbody id="SetPersonelList">
+            <tr>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+
+
+@using (Html.BeginForm("Guncelle", "Personel", FormMethod.Post)) //BeginForm(action ismi, controller ismi, method ismi)
+{
+
+    <div class="container">
+        <div class="modal " id="MyModal" role="dialog">
+            <div class="modal-dialog ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Employee Info <button class="close" data-dismiss="modal"> <span aria-hidden="true">&times;</span></button> </h4>
+
+                    </div>
+                    <div class="modal-body">
+
+
+                        @Html.TextBoxFor(x => x.ID, new { @id = "id", @class = "form-control", @type = "hidden" })
+
+                        <div class="form-group ">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="message-text" class="col-form-label">First Name:</label>
+                                        @Html.TextBoxFor(x => x.First_Name, new { @id = "first", @class = "form-control" })
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="message-text" class="col-form-label">Last Name:</label>
+                                        @Html.TextBoxFor(x => x.Last_Name, new { @id = "last", @class = "form-control" })
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <br />
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="message-text" class="col-form-label">Title:</label>
+                                        @Html.TextBoxFor(x => x.Title, new { @id = "title", @class = "form-control" })
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="message-text" class="col-form-label">Birth Date:</label>
+
+                                        @Html.TextBoxFor(x => x.Birth_Date, new { @id = "birth", @type = "date", @class = "form-control datepicker" })
+                                    </div>
+                                </div>
+
+                            </div>
+                            <br />
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="message-text" class="col-form-label">Position:</label> @Html.TextBoxFor(x => x.Position, new { @id = "position", @class = "form-control" })
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="message-text" class="col-form-label">Hire Date:</label>
+
+                                        @Html.TextBoxFor(x => x.Hire_Date, new { @id = "hire", @type = "date", @class = "form-control datepicker" })
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <br />
+                            <div class="container-fluid">
+                                <div class="form-group">
+                                    <label for="message-text" class="col-form-label">Notes:</label>
+
+                                    @Html.TextAreaFor(x => x.Notes, new { @id = "notes", @class = "form-control " })
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-header">
+                        <h4>Home Address</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="message-text" class="col-form-label">State</label>
+                                    @Html.TextBoxFor(x => x.State, new { @id = "state", @class = "form-control" })
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="message-text" class="col-form-label">Address</label>
+                                    @Html.TextBoxFor(x => x.Address, new { @id = "address", @class = "form-control" })
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-light">Save</button>
+                        <button class="btn btn-light" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css">
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/moment.min.js"></script>
+<script src="js\bootstrap.min.js"></script>
+@*<script src="~/Scripts/bootstrap-datepicker.min.js"></script>*@
+<link href="~/Content/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"/>
+
+<script>
+    $.get("/Personel/GetPersonelList", null, DataBind) //get(Controller/actionresult adı, ,fonksiyon adı)
+    //liste JsonResult'tan gelecek
+    function DataBind(liste) {
+        var setData = $("#SetPersonelList");
+
+
+        for (var i = 0; i < liste.length; i++) {
+
+            var data = "<tr>" +
+                /*"<td>" + liste[i].ID + "</td>" +*/
+                "<td>" + liste[i].Title + "</td>" +
+                "<td>" + liste[i].First_Name + "</td>" +
+                "<td>" + liste[i].Last_Name + "</td>" +
+                "<td>" + moment(liste[i].Birth_Date).format('MM/DD/YYYY') + "</td>" +
+                "<td>" + liste[i].Position + "</td>" +
+                "<td>" + moment(liste[i].Hire_Date).format('MM/DD/YYYY') + "</td>" +
+                "<td>" + liste[i].State + "</td>" +
+                "<td>" + "<a href='#' class='btn btn-link' onclick='EditPersonel(" + liste[i].ID + ")'>Edit</a>" + "</td>" +
+                "</tr>";
+            setData.append(data);
+        }
+    }
+
+    function EditPersonel(ID) {
+        var url = "/Personel/GetEditPersonel?ID=" + ID;
+        $("#MyModal").modal();
+        $.ajax({
+            url: url,
+            type: "get",
+            success: function (data) {
+                var obj = JSON.parse(data);
+                var datee = new Date(obj.Birth_Date);
+                console.log(datee.toLocaleDateString());
+                $("#id").val(obj.ID);
+                $("#first").val(obj.First_Name);
+                $("#last").val(obj.Last_Name);
+                $("#title").val(obj.Title);
+                $("#birth").val(moment(obj.Birth_Date).format('L'));
+                $("#hire").val(moment(obj.Hire_Date).format('L'));
+                $("#position").val(obj.Position);
+                $("#state").val(obj.State);
+                $("#notes").val(obj.Notes);
+                $("#address").val(obj.Address);
+            }
+        });
+    }
+
+
+    $('.datepicker').datepicker({
+        format: 'mm/dd/yyyy',
+        startDate: '-3d'
+    });
+
+
+</script>
